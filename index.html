@@ -1,0 +1,64 @@
+<html>
+	<head>
+		<title>The Kitty Game</title>
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+		<script type="text/javascript" src="code/jcanvas.js"></script>
+		<script type="text/javascript" src="code/game.js"></script>
+		<script type="text/javascript" src="code/views.js"></script>
+	</head>
+	<body>
+		<style>
+		body { overflow:hidden; background-color: black; -moz-user-select: none; -khtml-user-select: none;  -webkit-user-select: none; user-select: none;}
+		#container { width: 900px; height: 900px; margin: 0 auto; color: white;}
+		#game_canvas { cursor: none; }
+		#player { visibility:hidden; }
+		</style>
+		<script>
+			$(document).ready(function(){
+				$(window).unbind("click");
+				try{
+					var game = kitty.globgame = new kitty.Game($("#game_canvas"), $("#container"));
+					game.start();
+				}catch(e){
+					console.error(e);
+				}
+			});
+	    </script>
+
+		<script>
+			var tag = document.createElement('script');
+			tag.src = "https://www.youtube.com/iframe_api";
+			var firstScriptTag = document.getElementsByTagName('script')[0];
+			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+			function onYouTubeIframeAPIReady() {
+				console.log("readig");
+		        kitty.musicPlayer = new YT.Player('player', {
+		          height: '10',
+		          width: '10',
+		          videoId: 'lAIGb1lfpBw',
+		          events: {
+		            'onReady': function(ev){
+		              ev.target.playVideo();
+		            },
+		            'onStateChange': function(ev){
+		              if(ev.data != YT.PlayerState.PLAYING) ev.target.playVideo();
+		            }
+		          }
+		        });
+		    }
+		</script>
+		<div id="container" style="">
+			<div id="game_container">
+				Hey <a href="http://www.twitch.tv/kittyplaysgames">KittyPlaysGames</a>, happy 2014!<br/>
+				I wrote you a game, check it out :D<br/><br/>
+				<canvas id="game_canvas"  width="720" height="600"></canvas><br/><br/><br/>
+				Controls: <br/>
+				Click LMB to hit the things flying on the screen so you will be rewarded with points. Try not to hit Kappa and Suppy!<br/>You only have 2 minutes to earn as much points as possible :)
+				
+			</div>
+		</div>
+		 <div id="player"></div>
+	</body>
+</html>

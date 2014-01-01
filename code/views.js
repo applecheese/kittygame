@@ -5,7 +5,20 @@ kitty.MAX_INFO_DELTA = 200;
 
 kitty.rand = function(min, max){
 	return Math.round(Math.random() * max) + min;
+};
+
+kitty.load = function(images, callback, i) {
+	if(i == undefined) i = 0;
+	if(i == images.length) callback();
+	var img = new Image();
+	img.src = images[i];
+	img.onload = function(){
+		console.log("Loaded: " + img.src + "(" + (i + 1)  + "/" + images.length + ")");
+		kitty.load(images, callback, ++i);
+	};
 }
+
+kitty.Images = ["imgs/suppy.png", "imgs/kappa.png", "imgs/cat2.png", "imgs/cat1.png", "imgs/cat3.png", "imgs/csgo.png", "imgs/lol.png", "imgs/wow.png", "imgs/heart.png","imgs/catbg.png","imgs/space.jpg"];
 
 kitty.EntityType = function(name, points, img, w, h){ this.name = name; this.points = points; this.img = img; this.w = w; this.h = h;};
 
@@ -175,10 +188,11 @@ kitty.views.StartView = function(game, cb){
 	this.game = game;
 	this.canvas = game.canvas;
 	this.cb = cb;
+	this.defText = "Press [ENTER] to start!";
 	this.canvas.addLayer({
 		name: "text",
 		type: "text",
-		text: "Press [ENTER] to start!",
+		text: this.defText,
 		fillStyle: "yellow",
 		strokeStyle: "black",
 		strokeWidth: 1,
@@ -206,10 +220,15 @@ kitty.views.StartView = function(game, cb){
 	this.helloLayer = this.canvas.getLayer("hello");
 	this.animateText(this.textLayer, 28, 30, 200);
 	this.animateText(this.helloLayer, 20, 40, 1000);
+	var dis = this;
+	this.loaded = false;
+	kitty.load(kitty.Images, function(){
+		dis.loaded = true;
+	});
 	$(window).keydown(function(e){
-		if(e.keyCode == 13) cb();
+		if(e.keyCode == 13 && dis.loaded) cb();
 		e.preventDefault();
-	})
+	});
 }
 
 kitty.views.StartView.prototype = new kitty.views.View();
@@ -250,7 +269,7 @@ kitty.views.StartView.prototype.start = function(delta){
 kitty.views.StartView.prototype.render = function(){
 	this.canvas.clearCanvas();
 	this.canvas.drawImage({
-		source: "imgs/catbg.png",
+		source: "imgs/catbg.png", 
 		x: 0, y: 0,
 		fromCenter: false
 	});
@@ -270,6 +289,15 @@ kitty.views.StartView.prototype.render = function(){
 		text: "Written by J4x0 <3",
 		fromCenter: true
 	});
+	if(!this.loaded){
+		this.canvas.setLayer(this.textLayer, {
+			text: "Loading shit.. Please wait"
+		});
+	}else { 
+		this.canvas.setLayer(this.textLayer, {
+			text: this.defText
+		});
+	}
 	this.canvas.drawLayer(this.textLayer);
 	this.canvas.drawLayer(this.helloLayer);
 };
@@ -485,7 +513,7 @@ kitty.views.GameView.prototype.render = function(delta){
 	this.time += delta;
 	this.canvas.clearCanvas();
 	this.canvas.drawImage({
-		source: "imgs/space.jpg",
+		source: "imgs/space.jpg", 
 		x: 0, y: 0,
 		height: kitty.HEIGHT, width: 858 * (kitty.HEIGHT/ 536),
 		fromCenter: false
